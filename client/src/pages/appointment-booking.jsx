@@ -43,15 +43,27 @@ export default function AppointmentBooking() {
   });
 
   const { data: doctors = [], isLoading: doctorsLoading } = useQuery({
-    queryKey: ["/api/users"],
+    queryKey: ["/api/users", { role: "doctor" }],
     queryFn: async () => {
       const response = await apiRequest("GET", "/api/users?role=doctor");
-      return response.json();
+      if (!response.ok) {
+        throw new Error("Failed to fetch doctors");
+      }
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     },
   });
 
   const { data: availableSlots = [], isLoading: slotsLoading } = useQuery({
     queryKey: ["/api/appointments/available-slots", { doctorId: selectedDoctor?.id, date: selectedDate }],
+    queryFn: async () => {
+      const response = await apiRequest("GET", `/api/appointments/available-slots?doctorId=${selectedDoctor?.id}&date=${selectedDate}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch available slots");
+      }
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    },
     enabled: !!(selectedDoctor && selectedDate),
   });
 

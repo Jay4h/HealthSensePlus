@@ -35,7 +35,7 @@ const authorizeRole = (roles: string[]) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  
+
   // Test user creation endpoint (for development only)
   app.post("/api/create-test-user", async (req, res) => {
     try {
@@ -49,7 +49,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         phoneNumber: "555-0123",
         address: "123 Test St, Test City, TC 12345"
       };
-      
+
       // Check if user already exists
       const existingUser = await storage.getUserByEmail(testUser.email);
       if (existingUser) {
@@ -58,7 +58,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Hash password
       const hashedPassword = await bcrypt.hash(testUser.password, 10);
-      
+
       const user = await storage.createUser({
         ...testUser,
         password: hashedPassword
@@ -66,7 +66,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Remove password from response
       const { password, ...userResponse } = user;
-      
+
       res.status(201).json({ 
         message: "Test user created successfully", 
         user: userResponse,
@@ -120,14 +120,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ];
 
       const createdDoctors = [];
-      
+
       for (const doctor of testDoctors) {
         // Check if doctor already exists
         const existingDoctor = await storage.getUserByEmail(doctor.email);
         if (!existingDoctor) {
           // Hash password
           const hashedPassword = await bcrypt.hash(doctor.password, 10);
-          
+
           const newDoctor = await storage.createUser({
             ...doctor,
             password: hashedPassword
@@ -138,7 +138,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           createdDoctors.push(doctorResponse);
         }
       }
-      
+
       res.status(201).json({ 
         message: `${createdDoctors.length} test doctors created successfully`,
         doctors: createdDoctors,
@@ -148,12 +148,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(400).json({ message: "Failed to create test doctors", error });
     }
   });
-  
+
   // Authentication Routes
   app.post("/api/auth/register", async (req, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
-      
+
       // Check if user already exists
       const existingUser = await storage.getUserByEmail(userData.email);
       if (existingUser) {
@@ -162,7 +162,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Hash password
       const hashedPassword = await bcrypt.hash(userData.password, 10);
-      
+
       const user = await storage.createUser({
         ...userData,
         password: hashedPassword
@@ -170,7 +170,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Remove password from response
       const { password, ...userResponse } = user;
-      
+
       res.status(201).json({ user: userResponse });
     } catch (error) {
       res.status(400).json({ message: "Invalid user data", error });
@@ -180,7 +180,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { email, password } = req.body;
-      
+
       const user = await storage.getUserByEmail(email);
       if (!user) {
         return res.status(401).json({ message: "Invalid credentials" });
@@ -198,7 +198,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       const { password: _, ...userResponse } = user;
-      
+
       res.json({ token, user: userResponse });
     } catch (error) {
       res.status(500).json({ message: "Login failed", error });
@@ -212,7 +212,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       const { password, ...userResponse } = user;
       res.json(userResponse);
     } catch (error) {
@@ -224,12 +224,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const updates = req.body;
       delete updates.password; // Don't allow password updates through this route
-      
+
       const user = await storage.updateUser(req.user.userId, updates);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       const { password, ...userResponse } = user;
       res.json(userResponse);
     } catch (error) {
@@ -240,17 +240,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/users", authenticateToken, authorizeRole(['admin']), async (req, res) => {
     try {
       const { role } = req.query;
-      let users;
-      
-      if (role) {
-        users = await storage.getUsersByRole(role as string);
-      } else {
-        users = await storage.getAllUsers();
+      let users = await storage.getUsers();
+
+      // Add sample doctors if none exist and role=doctor is requested
+      if (role === "doctor" && users.filter(u => u.role === "doctor").length === 0) {
+        const sampleDoctors = [
+          {
+            id: "doctor-1",
+            email: "sarah.johnson@hospital.com",
+            firstName: "Sarah",
+            lastName: "Johnson",
+            role: "doctor",
+            specialization: "Cardiology",
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: "doctor-2", 
+            email: "michael.chen@hospital.com",
+            firstName: "Michael",
+            lastName: "Chen",
+            role: "doctor",
+            specialization: "Neurology",
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: "doctor-3",
+            email: "emily.rodriguez@hospital.com", 
+            firstName: "Emily",
+            lastName: "Rodriguez",
+            role: "doctor",
+            specialization: "Pediatrics",
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: "doctor-4",
+            email: "james.wilson@hospital.com",
+            firstName: "James", 
+            lastName: "Wilson",
+            role: "doctor",
+            specialization: "Orthopedics",
+            createdAt: new Date().toISOString()
+          }
+        ];
+
+        // Add sample doctors to storage
+        for (const doctor of sampleDoctors) {
+          await storage.createUser(doctor);
+        }
+
+        users = await storage.getUsers();
       }
-      
-      // Remove passwords from response
-      const usersResponse = users.map(({ password, ...user }) => user);
-      res.json(usersResponse);
+
+      if (role) {
+        users = users.filter(user => user.role === role);
+      }
+
+      res.json(users);
     } catch (error) {
       res.status(500).json({ message: "Failed to get users", error });
     }
@@ -260,7 +305,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/appointments", authenticateToken, async (req: any, res) => {
     try {
       let appointments;
-      
+
       if (req.user.role === 'patient') {
         appointments = await storage.getAppointmentsByPatient(req.user.userId);
       } else if (req.user.role === 'doctor') {
@@ -270,7 +315,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         return res.status(403).json({ message: "Access denied" });
       }
-      
+
       res.json(appointments);
     } catch (error) {
       res.status(500).json({ message: "Failed to get appointments", error });
@@ -280,12 +325,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/appointments", authenticateToken, async (req: any, res) => {
     try {
       let appointmentData = insertAppointmentSchema.parse(req.body);
-      
+
       // If user is patient, set patientId to their own ID
       if (req.user.role === 'patient') {
         appointmentData.patientId = req.user.userId;
       }
-      
+
       const appointment = await storage.createAppointment(appointmentData);
       res.status(201).json(appointment);
     } catch (error) {
@@ -297,12 +342,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { id } = req.params;
       const updates = req.body;
-      
+
       const appointment = await storage.updateAppointment(id, updates);
       if (!appointment) {
         return res.status(404).json({ message: "Appointment not found" });
       }
-      
+
       res.json(appointment);
     } catch (error) {
       res.status(500).json({ message: "Failed to update appointment", error });
@@ -313,20 +358,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/appointments/available-slots", authenticateToken, async (req, res) => {
     try {
       const { doctorId, date } = req.query;
-      
+
       // Get existing appointments for the doctor on that date
       const existingAppointments = await storage.getAppointmentsByDate(date as string);
       const doctorAppointments = existingAppointments.filter(apt => apt.doctorId === doctorId);
-      
+
       // Generate available slots (9 AM to 5 PM, excluding booked ones)
       const allSlots = [
         "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
         "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"
       ];
-      
+
       const bookedSlots = doctorAppointments.map(apt => apt.timeSlot);
       const availableSlots = allSlots.filter(slot => !bookedSlots.includes(slot));
-      
+
       res.json(availableSlots);
     } catch (error) {
       res.status(500).json({ message: "Failed to get available slots", error });
@@ -337,7 +382,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/medical-records", authenticateToken, async (req: any, res) => {
     try {
       let records;
-      
+
       if (req.user.role === 'patient') {
         records = await storage.getMedicalRecordsByPatient(req.user.userId);
       } else if (req.user.role === 'doctor') {
@@ -356,7 +401,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: "patientId parameter required" });
         }
       }
-      
+
       res.json(records);
     } catch (error) {
       res.status(500).json({ message: "Failed to get medical records", error });
@@ -366,12 +411,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/medical-records", authenticateToken, authorizeRole(['doctor', 'nurse']), async (req: any, res) => {
     try {
       const recordData = insertMedicalRecordSchema.parse(req.body);
-      
+
       // Set doctorId to current user if they're a doctor
       if (req.user.role === 'doctor') {
         recordData.doctorId = req.user.userId;
       }
-      
+
       const record = await storage.createMedicalRecord(recordData);
       res.status(201).json(record);
     } catch (error) {
@@ -383,12 +428,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { id } = req.params;
       const updates = req.body;
-      
+
       const record = await storage.updateMedicalRecord(id, updates);
       if (!record) {
         return res.status(404).json({ message: "Medical record not found" });
       }
-      
+
       res.json(record);
     } catch (error) {
       res.status(500).json({ message: "Failed to update medical record", error });
@@ -400,16 +445,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { patientId } = req.query;
       let targetPatientId = patientId as string;
-      
+
       // If user is patient, only allow access to their own metrics
       if (req.user.role === 'patient') {
         targetPatientId = req.user.userId;
       }
-      
+
       if (!targetPatientId) {
         return res.status(400).json({ message: "patientId parameter required" });
       }
-      
+
       const metrics = await storage.getHealthMetricsByPatient(targetPatientId);
       res.json(metrics);
     } catch (error) {
@@ -420,12 +465,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/health-metrics", authenticateToken, async (req: any, res) => {
     try {
       let metricsData = insertHealthMetricsSchema.parse(req.body);
-      
+
       // If user is patient, set patientId to their own ID
       if (req.user.role === 'patient') {
         metricsData.patientId = req.user.userId;
       }
-      
+
       const metrics = await storage.createHealthMetrics(metricsData);
       res.status(201).json(metrics);
     } catch (error) {
@@ -460,7 +505,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...req.body,
         userId: req.user.userId
       });
-      
+
       const feedback = await storage.createFeedback(feedbackData);
       res.status(201).json(feedback);
     } catch (error) {
@@ -484,7 +529,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const appointments = await storage.getAllAppointments();
       const today = new Date().toISOString().split('T')[0];
       const todayAppointments = await storage.getAppointmentsByDate(today);
-      
+
       const stats = {
         totalUsers: users.length,
         totalPatients: users.filter(u => u.role === 'patient').length,
@@ -493,7 +538,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         todayAppointments: todayAppointments.length,
         activeUsers: users.filter(u => u.isActive).length,
       };
-      
+
       res.json(stats);
     } catch (error) {
       res.status(500).json({ message: "Failed to get dashboard stats", error });
