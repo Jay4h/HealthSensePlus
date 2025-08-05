@@ -29,7 +29,7 @@ export default function Landing() {
     {
       id: 2,
       name: "Dr. Michael Chen",
-      specialty: "Neurology", 
+      specialty: "Neurology",
       experience: "12 years",
       rating: 4.8,
       patients: "1,923",
@@ -39,7 +39,7 @@ export default function Landing() {
       id: 3,
       name: "Dr. Emily Rodriguez",
       specialty: "Pediatrics",
-      experience: "18 years", 
+      experience: "18 years",
       rating: 5.0,
       patients: "3,456",
       avatar: "ER"
@@ -99,28 +99,28 @@ export default function Landing() {
       description: "Manage your health records, book appointments, and communicate with healthcare providers",
       features: [
         "View medical history",
-        "Book appointments", 
+        "Book appointments",
         "Access lab results",
         "Manage prescriptions"
       ],
       onClick: () => handleRoleSelect("patient")
     },
     {
-      title: "Doctor", 
+      title: "Doctor",
       icon: UserCheck,
       color: "healing-green",
       description: "Manage patient records, appointments, and provide comprehensive healthcare services",
       features: [
         "Patient management",
         "Schedule management",
-        "Write prescriptions", 
+        "Write prescriptions",
         "Medical records"
       ],
       onClick: () => handleRoleSelect("doctor")
     },
     {
       title: "Admin",
-      icon: Settings, 
+      icon: Settings,
       color: "healthcare-orange",
       description: "Oversee system operations, manage users, and maintain healthcare facility operations",
       features: [
@@ -133,8 +133,8 @@ export default function Landing() {
     },
     {
       title: "Nurse",
-      icon: Stethoscope,
-      color: "purple", 
+      icon: UserCheck,
+      color: "purple",
       description: "Assist with patient care, manage vitals, and coordinate with medical staff",
       features: [
         "Patient vitals",
@@ -149,7 +149,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-blue-50 to-green-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -162,7 +162,7 @@ export default function Landing() {
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                 Streamline patient care, manage appointments, and access medical records with our comprehensive healthcare platform designed for modern medical practices.
               </p>
-              
+
               <div className="flex flex-wrap gap-4 mb-8">
                 <div className="flex items-center bg-white px-4 py-2 rounded-full shadow-sm">
                   <Check className="h-5 w-5 text-green-600 mr-2" />
@@ -177,10 +177,10 @@ export default function Landing() {
                   <span className="text-sm font-medium">Multi-role Access</span>
                 </div>
               </div>
-              
+
               <AnimatedButton onClick={handleGetStarted} />
             </div>
-            
+
             <div className="relative">
               <div className="bg-white rounded-2xl shadow-2xl p-6 transform rotate-3 hover:rotate-0 transition-transform duration-300">
                 <div className="bg-gradient-to-r from-blue-600 to-green-600 h-3 rounded-t-lg mb-6"></div>
@@ -228,7 +228,7 @@ export default function Landing() {
               Meet our exceptional healthcare professionals with outstanding experience and patient satisfaction
             </p>
           </div>
-          
+
           <div className="scroll-container max-h-96 overflow-y-auto p-2 bg-gray-800 rounded-lg">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
               {topDoctors.map((doctor) => (
@@ -268,9 +268,9 @@ export default function Landing() {
               ))}
             </div>
           </div>
-          
+
           <div className="text-center mt-8">
-            <button 
+            <button
               onClick={handleGetStarted}
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
             >
@@ -289,7 +289,7 @@ export default function Landing() {
               Access your personalized dashboard based on your role in the healthcare system
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {roles.map((role, index) => (
               <RoleCard key={index} {...role} />
@@ -311,7 +311,7 @@ export default function Landing() {
                 Comprehensive healthcare management system designed to streamline patient care and improve medical outcomes.
               </p>
             </div>
-            
+
             <div>
               <h3 className="text-lg font-semibold mb-6">Quick Links</h3>
               <ul className="space-y-3">
@@ -321,7 +321,7 @@ export default function Landing() {
                 <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Privacy Policy</a></li>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="text-lg font-semibold mb-6">Services</h3>
               <ul className="space-y-3">
@@ -331,7 +331,7 @@ export default function Landing() {
                 <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Health Analytics</a></li>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="text-lg font-semibold mb-6">Support</h3>
               <ul className="space-y-3">
@@ -342,7 +342,7 @@ export default function Landing() {
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-gray-800 mt-12 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-gray-400 text-sm">&copy; 2024 HealthSensePlus. All rights reserved.</p>
