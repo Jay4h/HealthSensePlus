@@ -46,6 +46,7 @@ export function AuthProvider({ children }) {
   }, [profileData, error]);
 
   const login = (userData, token) => {
+    console.log("Login function called with:", userData, token);
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);

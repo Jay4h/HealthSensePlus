@@ -41,20 +41,22 @@ export default function Login() {
       return response.json();
     },
     onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      login(data.user); // Use the login function from useAuth
+      console.log("Login successful, data received:", data);
+      
+      // Use the login function from useAuth to properly set user and token
+      login(data.user, data.token);
 
       toast({
         title: "Login Successful",
         description: `Welcome back, ${data.user.firstName}!`,
       });
 
-      // Redirect based on user role
-      const userRole = data.user.role || 'patient';
-      console.log('Redirecting to:', `/dashboard/${userRole}`);
-
-      setLocation(`/dashboard/${userRole}`);
+      // Small delay to ensure state is updated before redirect
+      setTimeout(() => {
+        const userRole = data.user.role || 'patient';
+        console.log('Redirecting to:', `/dashboard/${userRole}`);
+        setLocation(`/dashboard/${userRole}`);
+      }, 100);
     },
     onError: (error) => {
       toast({

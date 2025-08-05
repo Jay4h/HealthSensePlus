@@ -11,8 +11,13 @@ export default function ProtectedRoute({ children, allowedRoles = [] }) {
   useEffect(() => {
     console.log('ProtectedRoute - isLoading:', isLoading, 'user:', user);
     if (!isLoading && !user) {
-      console.log('Redirecting to login - no user found');
-      setLocation("/login");
+      const token = localStorage.getItem("token");
+      const userData = localStorage.getItem("user");
+      
+      if (!token || !userData) {
+        console.log('Redirecting to login - no user found');
+        setLocation("/login");
+      }
     }
   }, [user, isLoading, setLocation]);
 
