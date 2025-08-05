@@ -4,3 +4,37 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+# Node dependencies
+node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+
+# Server files
+server/public/
+
+# Vite config variants
+vite.config.ts.*
+vite.config.js.*
+vite-env.d.ts
+
+# Archives
+*.tar.gz
+*.zip
+
+# Environment files
+.env
+.env.*.local
+
+# IDE configs
+.vscode/
+.idea/
