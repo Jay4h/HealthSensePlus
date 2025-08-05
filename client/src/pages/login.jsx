@@ -47,11 +47,11 @@ export default function Login() {
         description: `Welcome back, ${data.user.firstName}!`,
       });
 
-      // Redirect based on selected role or user role
-      const selectedRole = localStorage.getItem('selectedRole') || data.user.role;
-      localStorage.removeItem('selectedRole');
+      // Redirect based on user role
+      const userRole = data.user.role || 'patient';
+      console.log('Redirecting to:', `/dashboard/${userRole}`);
       
-      setLocation(`/dashboard/${selectedRole}`);
+      setLocation(`/dashboard/${userRole}`);
     },
     onError: (error) => {
       toast({
