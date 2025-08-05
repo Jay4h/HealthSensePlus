@@ -2,7 +2,7 @@ import { useLocation } from "wouter";
 import Navbar from "@/components/navbar";
 import AnimatedButton from "@/components/animated-button";
 import RoleCard from "@/components/role-card";
-import { Heart, Check, Users, UserCheck, Settings, Stethoscope } from "lucide-react";
+import { Heart, Check, Users, UserCheck, Settings, Stethoscope, Star, Award, Clock } from "lucide-react";
 
 export default function Landing() {
   const [, setLocation] = useLocation();
@@ -15,6 +15,81 @@ export default function Landing() {
     localStorage.setItem('selectedRole', role);
     setLocation("/login");
   };
+
+  const topDoctors = [
+    {
+      id: 1,
+      name: "Dr. Sarah Johnson",
+      specialty: "Cardiology",
+      experience: "15 years",
+      rating: 4.9,
+      patients: "2,847",
+      avatar: "SJ"
+    },
+    {
+      id: 2,
+      name: "Dr. Michael Chen",
+      specialty: "Neurology", 
+      experience: "12 years",
+      rating: 4.8,
+      patients: "1,923",
+      avatar: "MC"
+    },
+    {
+      id: 3,
+      name: "Dr. Emily Rodriguez",
+      specialty: "Pediatrics",
+      experience: "18 years", 
+      rating: 5.0,
+      patients: "3,456",
+      avatar: "ER"
+    },
+    {
+      id: 4,
+      name: "Dr. James Wilson",
+      specialty: "Orthopedics",
+      experience: "20 years",
+      rating: 4.7,
+      patients: "2,134",
+      avatar: "JW"
+    },
+    {
+      id: 5,
+      name: "Dr. Lisa Thompson",
+      specialty: "Dermatology",
+      experience: "14 years",
+      rating: 4.9,
+      patients: "1,876",
+      avatar: "LT"
+    },
+    {
+      id: 6,
+      name: "Dr. David Park",
+      specialty: "Internal Medicine",
+      experience: "16 years",
+      rating: 4.8,
+      patients: "2,567",
+      avatar: "DP"
+    },
+    {
+      id: 7,
+      name: "Dr. Maria Gonzalez",
+      specialty: "Psychiatry",
+      experience: "13 years",
+      rating: 4.9,
+      patients: "1,654",
+      avatar: "MG"
+    },
+    {
+      id: 8,
+      name: "Dr. Robert Kim",
+      specialty: "Surgery",
+      experience: "22 years",
+      rating: 5.0,
+      patients: "987",
+      avatar: "RK"
+    }
+  ];
 
   const roles = [
     {
@@ -140,6 +215,67 @@ export default function Landing() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Top Doctors Section */}
+      <section className="py-20 bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">Top Doctors</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Meet our exceptional healthcare professionals with outstanding experience and patient satisfaction
+            </p>
+          </div>
+          
+          <div className="scroll-container max-h-96 overflow-y-auto p-2 bg-gray-800 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+              {topDoctors.map((doctor) => (
+                <div key={doctor.id} className="item p-3 border-b border-gray-700 last:border-b-0 hover:bg-gray-750 transition-colors cursor-pointer">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                      {doctor.avatar}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-white text-lg">{doctor.name}</h3>
+                        <div className="flex items-center space-x-1">
+                          <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                          <span className="text-yellow-400 font-medium">{doctor.rating}</span>
+                        </div>
+                      </div>
+                      <p className="text-blue-400 font-medium">{doctor.specialty}</p>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center space-x-4 text-sm text-gray-300">
+                          <div className="flex items-center space-x-1">
+                            <Clock className="h-4 w-4" />
+                            <span>{doctor.experience}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Users className="h-4 w-4" />
+                            <span>{doctor.patients} patients</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Award className="h-4 w-4 text-green-400" />
+                          <span className="text-green-400 text-sm font-medium">Verified</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="text-center mt-8">
+            <button 
+              onClick={handleGetStarted}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+            >
+              View All Doctors
+            </button>
           </div>
         </div>
       </section>
