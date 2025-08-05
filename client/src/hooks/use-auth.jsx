@@ -18,9 +18,12 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
 
+    console.log("AuthProvider initializing - token:", token, "userData:", storedUser);
+
     if (token && storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
+        console.log("Setting user:", parsedUser);
         setUser(parsedUser);
       } catch (e) {
         console.error("Failed to parse stored user:", e);
@@ -28,7 +31,7 @@ export function AuthProvider({ children }) {
         localStorage.removeItem("token");
       }
     }
-    
+
     setIsLoading(false);
   }, []);
 
@@ -54,11 +57,17 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateUser = (userData) => {
+    console.log("Updating user in context:", userData);
+    setUser(userData);
+  };
+
   const value = {
     user,
     isLoading: isLoading || profileLoading,
     login,
     logout,
+    updateUser,
   };
 
   return (
@@ -75,3 +84,10 @@ export function useAuth() {
   }
   return context;
 }
+
+// Add a helper function to check if user is authenticated
+export const isAuthenticated = () => {
+  const token = localStorage.getItem("token");
+  const user = localStorage.getItem("user");
+  return !!(token && user);
+};

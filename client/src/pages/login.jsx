@@ -4,14 +4,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { Heart, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/use-auth";
+import { Eye, EyeOff, Heart, ArrowRight } from "lucide-react";
+import { apiRequest } from "@/lib/utils";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -23,7 +24,8 @@ export default function Login() {
   const [, setLocation] = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
-  
+  const { login } = useAuth(); // Added useAuth hook
+
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -41,7 +43,8 @@ export default function Login() {
     onSuccess: (data) => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      
+      login(data.user); // Use the login function from useAuth
+
       toast({
         title: "Login Successful",
         description: `Welcome back, ${data.user.firstName}!`,
@@ -50,7 +53,7 @@ export default function Login() {
       // Redirect based on user role
       const userRole = data.user.role || 'patient';
       console.log('Redirecting to:', `/dashboard/${userRole}`);
-      
+
       setLocation(`/dashboard/${userRole}`);
     },
     onError: (error) => {
@@ -79,7 +82,7 @@ export default function Login() {
             Please sign in to your account to continue
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
@@ -125,8 +128,8 @@ export default function Login() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="rememberMe" 
+                <Checkbox
+                  id="rememberMe"
                   {...form.register("rememberMe")}
                 />
                 <Label htmlFor="rememberMe" className="text-sm">
@@ -138,8 +141,8 @@ export default function Login() {
               </a>
             </div>
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700"
               disabled={loginMutation.isPending}
             >
@@ -157,8 +160,8 @@ export default function Login() {
           </div>
 
           <div className="mt-4 text-center space-y-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={async () => {
                 try {
                   const response = await fetch("/api/create-test-user", {
@@ -168,8 +171,8 @@ export default function Login() {
                   const data = await response.json();
                   toast({
                     title: "Test User",
-                    description: response.ok ? 
-                      `Email: test@example.com, Password: password123` : 
+                    description: response.ok ?
+                      `Email: test@example.com, Password: password123` :
                       data.message,
                     variant: response.ok ? "default" : "destructive"
                   });
@@ -185,8 +188,8 @@ export default function Login() {
             >
               Create Test User
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setLocation("/")}
               className="text-sm"
             >
