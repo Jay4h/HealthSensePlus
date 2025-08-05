@@ -36,6 +36,50 @@ const authorizeRole = (roles: string[]) => {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // Test user creation endpoint (for development only)
+  app.post("/api/create-test-user", async (req, res) => {
+    try {
+      const testUser = {
+        email: "test@example.com",
+        password: "password123",
+        firstName: "Test",
+        lastName: "User",
+        role: "patient",
+        dateOfBirth: "1990-01-01",
+        phoneNumber: "555-0123",
+        address: "123 Test St, Test City, TC 12345"
+      };
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(testUser.email);
+      if (existingUser) {
+        return res.status(200).json({ message: "Test user already exists", email: testUser.email });
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(testUser.password, 10);
+      
+      const user = await storage.createUser({
+        ...testUser,
+        password: hashedPassword
+      });
+
+      // Remove password from response
+      const { password, ...userResponse } = user;
+      
+      res.status(201).json({ 
+        message: "Test user created successfully", 
+        user: userResponse,
+        loginCredentials: {
+          email: testUser.email,
+          password: "password123"
+        }
+      });
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create test user", error });
+    }
+  });
+  
   // Authentication Routes
   app.post("/api/auth/register", async (req, res) => {
     try {

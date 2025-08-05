@@ -156,7 +156,35 @@ export default function Login() {
             </p>
           </div>
 
-          <div className="mt-4 text-center">
+          <div className="mt-4 text-center space-y-2">
+            <Button 
+              variant="outline" 
+              onClick={async () => {
+                try {
+                  const response = await fetch("/api/create-test-user", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                  });
+                  const data = await response.json();
+                  toast({
+                    title: "Test User",
+                    description: response.ok ? 
+                      `Email: test@example.com, Password: password123` : 
+                      data.message,
+                    variant: response.ok ? "default" : "destructive"
+                  });
+                } catch (error) {
+                  toast({
+                    title: "Error",
+                    description: "Failed to create test user",
+                    variant: "destructive"
+                  });
+                }
+              }}
+              className="w-full text-sm mb-2"
+            >
+              Create Test User
+            </Button>
             <Button 
               variant="outline" 
               onClick={() => setLocation("/")}
