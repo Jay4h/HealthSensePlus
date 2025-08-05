@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/use-auth";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import Login from "@/pages/login";
+import Signup from "@/pages/signup";
 import PatientDashboard from "@/pages/patient-dashboard";
 import DoctorDashboard from "@/pages/doctor-dashboard";
 import AdminDashboard from "@/pages/admin-dashboard";
@@ -21,6 +22,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Landing} />
       <Route path="/login" component={Login} />
+      <Route path="/signup" component={Signup} />
       <Route path="/contact" component={Contact} />
 
       {/* Protected Routes */}
