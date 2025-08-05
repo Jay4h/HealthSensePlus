@@ -1,0 +1,287 @@
+Based on the image provided, I can see the project requirements for a HealthSensePlus healthcare management system. Let me create a comprehensive project prompt based on the visible features and requirements.
+
+# HealthSensePlus - Comprehensive Healthcare Management System Project Prompt
+
+## Project Overview
+Build a full-stack healthcare management web application called **HealthSensePlus** using React.js for the frontend and Express.js/Node.js for the backend. This system should provide comprehensive healthcare management functionalities for patients, healthcare providers, and administrators.
+
+## Technology Stack Requirements
+
+### Frontend
+- **Framework**: React.js (latest version)
+- **State Management**: Redux Toolkit or Context API
+- **UI Library**: Material-UI, Ant Design, or Chakra UI
+- **Routing**: React Router DOM
+- **Form Handling**: Formik or React Hook Form
+- **HTTP Client**: Axios
+- **Styling**: CSS Modules or Styled Components
+
+### Backend
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Database**: MongoDB with Mongoose ODM or PostgreSQL with Sequelize
+- **Authentication**: JWT (JSON Web Tokens)
+- **File Upload**: Multer
+- **Email Service**: Nodemailer
+- **API Documentation**: Swagger/OpenAPI
+- **Real-time Communication**: Socket.io
+
+### Additional Tools
+- **Testing**: Jest, React Testing Library
+- **Code Quality**: ESLint, Prettier
+- **Version Control**: Git
+- **Deployment**: Docker containers ready
+
+## Core Features & Modules
+
+### 1. Authentication & Authorization System
+- **Multi-role login system**: Patient, Doctor, Admin, Nurse
+- **Registration workflow** with email verification
+- **Password reset functionality**
+- **Role-based access control (RBAC)**
+- **Session management**
+- **Security features**: Rate limiting, input validation, CORS protection
+
+### 2. User Roles & Dashboard
+
+#### Patient Dashboard
+- **Personal health profile management**
+- **Medical history tracking**
+- **Appointment scheduling interface**
+- **Prescription management**
+- **Lab report access**
+- **Bill payment system**
+- **Health metrics tracking**
+
+#### Doctor Dashboard
+- **Patient management system**
+- **Appointment calendar**
+- **Medical record management**
+- **Prescription writing module**
+- **Diagnostic tools integration**
+- **Patient communication portal**
+
+#### Admin Dashboard
+- **User management (CRUD operations)**
+- **Hospital/clinic management**
+- **Doctor scheduling**
+- **Financial reporting**
+- **System analytics**
+- **Audit logs**
+
+### 3. Appointment Booking System
+- **Real-time availability checking**
+- **Multi-step booking process**
+- **Calendar integration**
+- **Automated confirmation emails/SMS**
+- **Rescheduling functionality**
+- **Waiting list management**
+- **Time slot management**
+
+### 4. Electronic Medical Record (EMR) System
+- **Comprehensive patient profiles**
+- **Medical history documentation**
+- **Medication tracking**
+- **Allergy management**
+- **Vital signs recording**
+- **Treatment plans**
+- **Medical imaging integration**
+- **Progress notes**
+
+### 5. E-health Analytics Dashboard
+- **Patient health metrics visualization**
+- **Treatment outcome tracking**
+- **Hospital performance metrics**
+- **Financial analytics**
+- **Appointment statistics**
+- **Custom report generation**
+- **Data export functionality**
+
+### 6. Admin Panel
+- **User role management**
+- **System configuration**
+- **Content management**
+- **Backup and restore**
+- **System monitoring**
+- **Security settings**
+
+### 7. Contact & Feedback System
+- **Contact form with validation**
+- **Feedback collection**
+- **Support ticket system**
+- **FAQ management**
+- **Live chat integration**
+
+### 8. Search & Filter Features
+- **Global search functionality**
+- **Advanced filtering options**
+- **Quick search for doctors**
+- **Medical record search**
+- **Appointment search**
+
+## Technical Implementation Requirements
+
+### Database Schema Design
+```javascript
+// User Schema
+{
+  _id: ObjectId,
+  email: String,
+  password: String (hashed),
+  role: String (enum: ['patient', 'doctor', 'admin', 'nurse']),
+  profile: {
+    firstName: String,
+    lastName: String,
+    phone: String,
+    address: Object,
+    dateOfBirth: Date,
+    gender: String,
+    profileImage: String
+  },
+  isActive: Boolean,
+  createdAt: Date,
+  updatedAt: Date
+}
+
+// Appointment Schema
+{
+  _id: ObjectId,
+  patientId: ObjectId,
+  doctorId: ObjectId,
+  appointmentDate: Date,
+  timeSlot: String,
+  status: String (enum: ['scheduled', 'completed', 'cancelled', 'rescheduled']),
+  reason: String,
+  notes: String,
+  createdAt: Date
+}
+
+// Medical Record Schema
+{
+  _id: ObjectId,
+  patientId: ObjectId,
+  doctorId: ObjectId,
+  visitDate: Date,
+  diagnosis: String,
+  prescription: Array,
+  labResults: Array,
+  vitals: Object,
+  notes: String,
+  attachments: Array
+}
+```
+
+### API Endpoints Structure
+```javascript
+// Authentication Routes
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/logout
+POST /api/auth/forgot-password
+POST /api/auth/reset-password
+GET /api/auth/verify-email/:token
+
+// User Management Routes
+GET /api/users/profile
+PUT /api/users/profile
+GET /api/users (admin only)
+DELETE /api/users/:id (admin only)
+
+// Appointment Routes
+GET /api/appointments
+POST /api/appointments
+PUT /api/appointments/:id
+DELETE /api/appointments/:id
+GET /api/appointments/available-slots
+
+// Medical Records Routes
+GET /api/medical-records/patient/:patientId
+POST /api/medical-records
+PUT /api/medical-records/:id
+GET /api/medical-records/:id
+
+// Analytics Routes
+GET /api/analytics/dashboard-stats
+GET /api/analytics/health-metrics
+GET /api/analytics/reports
+```
+
+### Security Implementation
+- **Input validation and sanitization**
+- **SQL injection prevention**
+- **XSS protection**
+- **CSRF protection**
+- **Rate limiting**
+- **Data encryption for sensitive information**
+- **Secure file upload handling**
+- **API authentication middleware**
+
+### UI/UX Requirements
+- **Responsive design** (mobile-first approach)
+- **Accessibility compliance** (WCAG 2.1)
+- **Intuitive navigation**
+- **Loading states and error handling**
+- **Form validation with real-time feedback**
+- **Dark/Light theme toggle**
+- **Progressive Web App (PWA) features**
+
+### Performance Optimization
+- **Lazy loading for components**
+- **Image optimization**
+- **API response caching**
+- **Database query optimization**
+- **Bundle splitting**
+- **Service worker implementation**
+
+## Development Phases
+
+### Phase 1: Foundation (Weeks 1-2)
+- Project setup and configuration
+- Database design and setup
+- Authentication system implementation
+- Basic user interfaces
+
+### Phase 2: Core Features (Weeks 3-6)
+- User dashboards development
+- Appointment booking system
+- Basic EMR functionality
+- Admin panel basics
+
+### Phase 3: Advanced Features (Weeks 7-10)
+- Analytics dashboard
+- Advanced EMR features
+- Search and filter implementation
+- File upload system
+
+### Phase 4: Integration & Testing (Weeks 11-12)
+- API integration
+- Comprehensive testing
+- Security audit
+- Performance optimization
+
+### Phase 5: Deployment & Documentation (Weeks 13-14)
+- Production deployment
+- Documentation completion
+- User training materials
+- System monitoring setup
+
+## Deliverables
+1. **Complete source code** with proper documentation
+2. **Database schema** and migration scripts
+3. **API documentation** using Swagger
+4. **User manual** and technical documentation
+5. **Deployment guide** with Docker configuration
+6. **Test coverage report**
+7. **Security audit report**
+
+## Quality Standards
+- **Code coverage**: Minimum 80%
+- **Performance**: Page load time < 3 seconds
+- **Accessibility**: WCAG 2.1 AA compliance
+- **Security**: OWASP compliance
+- **Browser support**: Modern browsers (Chrome, Firefox, Safari, Edge)
+- **Mobile responsiveness**: All screen sizes
+
+This comprehensive prompt provides a complete roadmap for building a professional healthcare management system with modern web technologies and best practices.
+
+[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/images/78755178/34f14b08-cde2-4c9c-ac4c-ddf776a1ef64/p.jpg?AWSAccessKeyId=ASIA2F3EMEYEQFFTE36C&Signature=tl4Ko8QIqe4y%2BG0h4Y8PBvCTYcs%3D&x-amz-security-token=IQoJb3JpZ2luX2VjECYaCXVzLWVhc3QtMSJHMEUCIDxYp4G3f5mXIxNO6tUO%2B5xBMb5KmofK9FyjvK7BEw7GAiEAgpDaGKkU745dijqd8%2F2aH%2BA5Fj1pSBsK%2FMU9ffhJDooq8QQIXxABGgw2OTk3NTMzMDk3MDUiDMnr0n%2B6%2FCTsoyRtWirOBFqIX0L831hq5sUKNf0l%2BoT2hCs1UErwwpOuFNNtsZhX9RuAEO%2BkJRo%2FHCi6G3jnay2zOF94w2bNvx1yaZUzFNXj0BrALy5jIsBGjjr3rO1LN4SNsK3M%2FI4vekL%2BavvVsA5wzINdyNMRwLPe43H8qIdw9cbVe8x2A3%2FspeJ1C%2B3CQG1XgPDelKfZhgfNpyc0%2FxzPXYpNTpOkBE0uMl6cHaBatG9dGwFfoQdGajI6jZg0T9ZC2YVi9a68DaAENe%2F2j%2BVKs2yh2TPzDc0jfYvMSrqgsA5hVvpc2mI4MHKRorY%2B6yo2P%2B5GUkUbNL0wH8Zz%2BLYtkvNDkXf21nRFpud90RNJ8dY0mEzVonEhd%2FqNJPHGmLjlDWdDQnHNWbi7g%2BaiKa2F8RmcNEk9BvX%2FCdPV92bwI9ZqSdm7EWoGE%2FWaDEA26mXM2E7bbghpBLuAz6Kz5a0aFVF6pe566WZHha%2BM12YMnPYtpaop1QSHev6gFxXB5LIbTYJCPQ%2BEm4HuEgci3VA%2BY8sQFTrrm%2B0LGVG9yBpi6WaqUW1PtVOS0Pvs%2B4XF%2F7HSRNEJqaa5y4SrVFMpNiqgQdhaQmzBEnKQzm6ePYLPcqTHQljXmsy7Upp6%2F72Q1t7Fd7dHlteipDRrMAz75oAkjm2j20Kz6ByNdIFSgOqHobTvJuvwGfFYyhSMEUlOqtpUQquKuwcdvpdgzN%2B9E%2FydGRnyV7XKxXHSC3W5NaaYgUwPKhvjwxH6MmqIdZxS76GL%2BuXov5S00pMvgfJBQvqNWTs%2FccIX56fH0eUXMJaWyMQGOpoBpzYdXu1%2B%2BWP3VeDVwYgDGjVXiCwtcHkGlgRExPYqR%2FTLWabFH239eHLShQZXPukLUt5MSRN8LGhDatU7Xrk76OhAhVpGLgXcTtUlv1wgyJX9n%2FjPmGPD0Fv3ZD9HV5sILESdMnLsB3lO28A5i4U5S8GLynKpyecaTkCFyPXMqk5oiKJzB%2BuHlimG43DKm62M8ICHTFCgVTBhXw%3D%3D&Expires=1754404507
