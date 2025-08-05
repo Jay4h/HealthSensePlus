@@ -43,7 +43,11 @@ export default function AppointmentBooking() {
   });
 
   const { data: doctors = [], isLoading: doctorsLoading } = useQuery({
-    queryKey: ["/api/users", { role: "doctor" }],
+    queryKey: ["/api/users"],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/users?role=doctor");
+      return response.json();
+    },
   });
 
   const { data: availableSlots = [], isLoading: slotsLoading } = useQuery({

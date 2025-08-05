@@ -79,6 +79,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(400).json({ message: "Failed to create test user", error });
     }
   });
+
+  // Create test doctors endpoint (for development only)
+  app.post("/api/create-test-doctors", async (req, res) => {
+    try {
+      const testDoctors = [
+        {
+          email: "dr.sarah@example.com",
+          password: "doctor123",
+          firstName: "Sarah",
+          lastName: "Wilson",
+          role: "doctor",
+          dateOfBirth: "1985-03-15",
+          phoneNumber: "555-0101",
+          address: "456 Medical Ave, Health City, HC 67890",
+          specialization: "Cardiologist"
+        },
+        {
+          email: "dr.james@example.com",
+          password: "doctor123",
+          firstName: "James",
+          lastName: "Rodriguez",
+          role: "doctor",
+          dateOfBirth: "1980-07-22",
+          phoneNumber: "555-0102",
+          address: "789 Healthcare Blvd, Wellness Town, WT 54321",
+          specialization: "General Practice"
+        },
+        {
+          email: "dr.emily@example.com",
+          password: "doctor123",
+          firstName: "Emily",
+          lastName: "Chen",
+          role: "doctor",
+          dateOfBirth: "1988-11-08",
+          phoneNumber: "555-0103",
+          address: "321 Clinic St, Medical Plaza, MP 98765",
+          specialization: "Pediatrician"
+        }
+      ];
+
+      const createdDoctors = [];
+      
+      for (const doctor of testDoctors) {
+        // Check if doctor already exists
+        const existingDoctor = await storage.getUserByEmail(doctor.email);
+        if (!existingDoctor) {
+          // Hash password
+          const hashedPassword = await bcrypt.hash(doctor.password, 10);
+          
+          const newDoctor = await storage.createUser({
+            ...doctor,
+            password: hashedPassword
+          });
+
+          // Remove password from response
+          const { password, ...doctorResponse } = newDoctor;
+          createdDoctors.push(doctorResponse);
+        }
+      }
+      
+      res.status(201).json({ 
+        message: `${createdDoctors.length} test doctors created successfully`,
+        doctors: createdDoctors,
+        loginInfo: "All doctors can login with password: doctor123"
+      });
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create test doctors", error });
+    }
+  });
   
   // Authentication Routes
   app.post("/api/auth/register", async (req, res) => {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Heart, Menu, X, User, LogOut, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -26,6 +26,7 @@ export default function Navbar() {
     { name: "Dashboard", href: getDashboardLink(), show: !!user },
     { name: "Appointments", href: "/appointments", show: !!user },
     { name: "Medical Records", href: "/medical-records", show: !!user },
+    { name: "Notifications", href: "/notifications", show: !!user },
     { name: "Contact", href: "/contact", show: true },
   ];
 
@@ -45,13 +46,19 @@ export default function Navbar() {
               {navigationItems
                 .filter(item => item.show)
                 .map((item) => (
-                  <button
+                  <Link
                     key={item.name}
-                    onClick={() => setLocation(item.href)}
-                    className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    href={item.href}
+                    className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
                   >
+                    {item.name === "Notifications" && <Bell className="h-4 w-4 mr-1" />}
                     {item.name}
-                  </button>
+                    {item.name === "Notifications" && (
+                      <Badge variant="destructive" className="ml-1 px-1.5 py-0.5 text-xs">
+                        3
+                      </Badge>
+                    )}
+                  </Link>
                 ))}
             </div>
           </div>
@@ -61,12 +68,12 @@ export default function Navbar() {
             {user ? (
               <>
                 {/* Notifications */}
-                <Button variant="ghost" size="sm" className="relative">
-                  <Bell className="h-4 w-4" />
+                <Link href="/notifications" className="relative">
+                  <Bell className="h-5 w-5 text-gray-600 hover:text-blue-600" />
                   <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs bg-red-500">
                     3
                   </Badge>
-                </Button>
+                </Link>
 
                 {/* User Dropdown */}
                 <DropdownMenu>
@@ -94,6 +101,10 @@ export default function Navbar() {
                     <DropdownMenuItem onClick={() => setLocation("/medical-records")}>
                       Medical Records
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setLocation("/notifications")}>
+                      <Bell className="mr-2 h-4 w-4" />
+                      Notifications
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="text-red-600">
                       <LogOut className="mr-2 h-4 w-4" />
@@ -103,7 +114,7 @@ export default function Navbar() {
                 </DropdownMenu>
               </>
             ) : (
-              <Button 
+              <Button
                 onClick={() => setLocation("/login")}
                 className="bg-blue-600 hover:bg-blue-700"
               >
@@ -135,19 +146,23 @@ export default function Navbar() {
               {navigationItems
                 .filter(item => item.show)
                 .map((item) => (
-                  <button
+                  <Link
                     key={item.name}
-                    onClick={() => {
-                      setLocation(item.href);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="text-gray-600 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-colors"
+                    href={item.href}
+                    className="text-gray-600 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium flex items-center"
+                    onClick={() => setIsMobileMenuOpen(false)}
                   >
+                    {item.name === "Notifications" && <Bell className="h-5 w-5 mr-2" />}
                     {item.name}
-                  </button>
+                    {item.name === "Notifications" && (
+                      <Badge variant="destructive" className="ml-2 px-1.5 py-0.5 text-xs">
+                        3
+                      </Badge>
+                    )}
+                  </Link>
                 ))}
               {!user && (
-                <Button 
+                <Button
                   onClick={() => {
                     setLocation("/login");
                     setIsMobileMenuOpen(false);

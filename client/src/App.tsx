@@ -14,6 +14,7 @@ import AdminDashboard from "@/pages/admin-dashboard";
 import NurseDashboard from "@/pages/nurse-dashboard";
 import AppointmentBooking from "@/pages/appointment-booking";
 import MedicalRecords from "@/pages/medical-records";
+import Notifications from "@/pages/notifications";
 import Contact from "@/pages/contact";
 import ProtectedRoute from "@/components/protected-route";
 
@@ -59,6 +60,12 @@ function Router() {
       <Route path="/medical-records">
         <ProtectedRoute allowedRoles={['patient', 'doctor', 'admin', 'nurse']}>
           <MedicalRecords />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/notifications">
+        <ProtectedRoute allowedRoles={['patient', 'doctor', 'admin', 'nurse']}>
+          <Notifications />
         </ProtectedRoute>
       </Route>
 
