@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthSensePlus - Healthcare Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': {
+                            50: '#eff6ff',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                            900: '#1e2761'
+                        },
+                        'healing-green': {
+                            50: '#ecfdf5',
+                            500: '#059669',
+                            600: '#047857',
+                            700: '#065f46'
+                        },
+                        'healthcare-orange': {
+                            400: '#fb923c',
+                            500: '#f59e0b',
+                            600: '#d97706'
+                        }
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Custom 3D Button Animation from provided CSS */
+        .container-button {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            grid-template-areas: "bt-1 bt-2 bt-3" "bt-4 bt-5 bt-6";
+            position: relative;
+            perspective: 800px;
+            padding: 0;
+            width: 140px;
+            height: 50px;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .container-button:active {
+            transform: scale(0.95);
+        }
+        
+        .hover {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 200;
+        }
+        
+        .bt-1 { grid-area: bt-1; }
+        .bt-2 { grid-area: bt-2; }
+        .bt-3 { grid-area: bt-3; }
+        .bt-4 { grid-area: bt-4; }
+        .bt-5 { grid-area: bt-5; }
+        .bt-6 { grid-area: bt-6; }
+        
+        .bt-1:hover ~ .animated-button {
+            transform: rotateX(15deg) rotateY(-15deg) rotateZ(0deg);
+            box-shadow: -2px -2px #18181888;
+        }
+        
+        .bt-3:hover ~ .animated-button {
+            transform: rotateX(15deg) rotateY(15deg) rotateZ(0deg);
+            box-shadow: 2px -2px #18181888;
+        }
+        
+        .bt-4:hover ~ .animated-button {
+            transform: rotateX(-15deg) rotateY(-15deg) rotateZ(0deg);
+            box-shadow: -2px 2px #18181888;
+        }
+        
+        .bt-6:hover ~ .animated-button {
+            transform: rotateX(-15deg) rotateY(15deg) rotateZ(0deg);
+            box-shadow: 2px 2px #18181888;
+        }
+        
+        .hover:hover ~ .animated-button::before {
+            background: transparent;
+        }
+        
+        .hover:hover ~ .animated-button::after {
+            content: "Login";
+            top: -150%;
+            transform: translate(-50%, 0);
+            font-size: 24px;
+            color: #2563eb;
+        }
+        
+        .animated-button {
+            position: absolute;
+            padding: 0;
+            width: 140px;
+            height: 50px;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 600;
+            border: 3px solid #2563eb;
+            border-radius: 12px;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        
+        .animated-button::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 50px;
+            background-color: #2563eb;
+            border-radius: 12px;
+            transition: all 0.3s ease-in-out;
+            z-index: -1;
+        }
+        
+        .animated-button::after {
+            content: "Get Started";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 50px;
+            background-color: transparent;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 50px;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            transition: all 0.3s ease-in-out;
+            z-index: 2;
+        }
+        
+        .dashboard-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-left: 4px solid #2563eb;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .appointment-card {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid #059669;
+        }
+        
+        .medical-record-card {
+            background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+            border-left: 4px solid #f59e0b;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-inter">
+    <!-- @COMPONENT: Navigation Header -->
+    <nav class="bg-white shadow-lg border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-heartbeat text-medical-blue-600 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-900">HealthSensePlus</span>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="text-medical-blue-600 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#services" class="text-gray-600 hover:text-medical-blue-600 px-3 py-2 rounded-md text-sm font-medium">Services</a>
+                        <a href="#about" class="text-gray-600 hover:text-medical-blue-600 px-3 py-2 rounded-md text-sm font-medium">About</a>
+                        <a href="#contact" class="text-gray-600 hover:text-medical-blue-600 px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="bg-medical-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-medical-blue-700 transition-colors">
+                        Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: Navigation Header -->
+
+    <!-- @COMPONENT: Hero Section -->
+    <section id="home" class="bg-gradient-to-br from-medical-blue-50 to-healing-green-50 py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h1 class="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
+                        Complete Healthcare
+                        <span class="text-medical-blue-600">Management System</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+                        Streamline patient care, manage appointments, and access medical records with our comprehensive healthcare platform designed for modern medical practices.
+                    </p>
+                    <div class="flex flex-wrap gap-4 mb-8">
+                        <div class="flex items-center bg-white px-4 py-2 rounded-full shadow-sm">
+                            <i class="fas fa-check text-healing-green-600 mr-2"></i>
+                            <span class="text-sm font-medium">HIPAA Compliant</span>
+                        </div>
+                        <div class="flex items-center bg-white px-4 py-2 rounded-full shadow-sm">
+                            <i class="fas fa-check text-healing-green-600 mr-2"></i>
+                            <span class="text-sm font-medium">Real-time Updates</span>
+                        </div>
+                        <div class="flex items-center bg-white px-4 py-2 rounded-full shadow-sm">
+                            <i class="fas fa-check text-healing-green-600 mr-2"></i>
+                            <span class="text-sm font-medium">Multi-role Access</span>
+                        </div>
+                    </div>
+                    <div class="container-button">
+                        <div class="hover"></div>
+                        <div class="bt-1"></div>
+                        <div class="bt-2"></div>
+                        <div class="bt-3"></div>
+                        <div class="bt-4"></div>
+                        <div class="bt-5"></div>
+                        <div class="bt-6"></div>
+                        <button class="animated-button" data-event="click:redirectToLogin"></button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <!-- Modern healthcare dashboard illustration -->
+                    <div class="bg-white rounded-2xl shadow-2xl p-6 transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                        <div class="bg-gradient-to-r from-medical-blue-600 to-healing-green-600 h-3 rounded-t-lg mb-6"></div>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-medical-blue-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user-md text-medical-blue-600"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="font-semibold text-gray-900">Dr. Sarah Wilson</p>
+                                        <p class="text-sm text-gray-500">Cardiologist</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-healing-green-600">Available</p>
+                                    <p class="text-xs text-gray-500">Next: 2:30 PM</p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <h4 class="font-semibold text-gray-900 mb-2">Today's Schedule</h4>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span>Appointments</span>
+                                        <span class="font-medium">12/15</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-medical-blue-600 h-2 rounded-full" style="width: 80%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Hero Section -->
+
+    <!-- @COMPONENT: Role Selection Cards -->
+    <section id="services" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Choose Your Role</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Access your personalized dashboard based on your role in the healthcare system
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- @COMPONENT: Patient Role Card -->
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-medical-blue-200 group cursor-pointer">
+                    <div class="p-8 text-center">
+                        <div class="w-16 h-16 bg-medical-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-medical-blue-600 transition-colors">
+                            <i class="fas fa-user text-medical-blue-600 text-2xl group-hover:text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Patient</h3>
+                        <p class="text-gray-600 text-sm mb-6">
+                            Manage your health records, book appointments, and communicate with healthcare providers
+                        </p>
+                        <ul class="text-left text-sm text-gray-600 space-y-2 mb-6">
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                View medical history
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Book appointments
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Access lab results
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Manage prescriptions
+                            </li>
+                        </ul>
+                        <button class="w-full bg-medical-blue-600 text-white py-3 rounded-lg font-medium hover:bg-medical-blue-700 transition-colors" data-event="click:selectPatientRole">
+                            Access Dashboard
+                        </button>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: Patient Role Card -->
+
+                <!-- @COMPONENT: Doctor Role Card -->
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-healing-green-200 group cursor-pointer">
+                    <div class="p-8 text-center">
+                        <div class="w-16 h-16 bg-healing-green-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-healing-green-600 transition-colors">
+                            <i class="fas fa-user-md text-healing-green-600 text-2xl group-hover:text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Doctor</h3>
+                        <p class="text-gray-600 text-sm mb-6">
+                            Manage patient records, appointments, and provide comprehensive healthcare services
+                        </p>
+                        <ul class="text-left text-sm text-gray-600 space-y-2 mb-6">
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Patient management
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Schedule management
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Write prescriptions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Medical records
+                            </li>
+                        </ul>
+                        <button class="w-full bg-healing-green-600 text-white py-3 rounded-lg font-medium hover:bg-healing-green-700 transition-colors" data-event="click:selectDoctorRole">
+                            Access Dashboard
+                        </button>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: Doctor Role Card -->
+
+                <!-- @COMPONENT: Admin Role Card -->
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-healthcare-orange-200 group cursor-pointer">
+                    <div class="p-8 text-center">
+                        <div class="w-16 h-16 bg-healthcare-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-healthcare-orange-500 transition-colors">
+                            <i class="fas fa-cog text-healthcare-orange-500 text-2xl group-hover:text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Admin</h3>
+                        <p class="text-gray-600 text-sm mb-6">
+                            Oversee system operations, manage users, and maintain healthcare facility operations
+                        </p>
+                        <ul class="text-left text-sm text-gray-600 space-y-2 mb-6">
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                User management
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                System analytics
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Financial reports
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Audit logs
+                            </li>
+                        </ul>
+                        <button class="w-full bg-healthcare-orange-500 text-white py-3 rounded-lg font-medium hover:bg-healthcare-orange-600 transition-colors" data-event="click:selectAdminRole">
+                            Access Dashboard
+                        </button>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: Admin Role Card -->
+
+                <!-- @COMPONENT: Nurse Role Card -->
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-purple-200 group cursor-pointer">
+                    <div class="p-8 text-center">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-purple-600 transition-colors">
+                            <i class="fas fa-user-nurse text-purple-600 text-2xl group-hover:text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Nurse</h3>
+                        <p class="text-gray-600 text-sm mb-6">
+                            Assist with patient care, manage vitals, and coordinate with medical staff
+                        </p>
+                        <ul class="text-left text-sm text-gray-600 space-y-2 mb-6">
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Patient vitals
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Medication tracking
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Care coordination
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check text-healing-green-600 mr-2 text-xs"></i>
+                                Patient communication
+                            </li>
+                        </ul>
+                        <button class="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors" data-event="click:selectNurseRole">
+                            Access Dashboard
+                        </button>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: Nurse Role Card -->
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Role Selection Cards -->
+
+    <!-- @COMPONENT: Authentication Modal -->
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            <div class="p-8">
+                <div class="text-center mb-6">
+                    <i class="fas fa-heartbeat text-medical-blue-600 text-3xl mb-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h3>
+                    <p class="text-gray-600">Please sign in to your account</p>
+                </div>
+                
+                <form class="space-y-6" data-mock="true">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent" placeholder="Enter your email" data-validation="email">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent" placeholder="Enter your password" data-validation="required">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-medical-blue-600 focus:ring-medical-blue-500">
+                            <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                        </label>
+                        <a href="#" class="text-sm text-medical-blue-600 hover:text-medical-blue-700">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="w-full bg-medical-blue-600 text-white py-3 rounded-lg font-medium hover:bg-medical-blue-700 transition-colors" data-event="click:handleLogin">
+                        Sign In
+                    </button>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        Don't have an account? 
+                        <a href="#" class="text-medical-blue-600 hover:text-medical-blue-700 font-medium">Sign up</a>
+                    </p>
+                </div>
+            </div>
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-gray-600" onclick="closeAuthModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: Authentication Modal -->
+
+    <!-- @COMPONENT: Patient Dashboard -->
+    <section id="patientDashboard" class="py-20 bg-gray-50 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Patient Dashboard</h1>
+                        <p class="text-gray-600 mt-2" data-bind="patient.greeting">Good morning, John Doe</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="bg-white px-4 py-2 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
+                            <i class="fas fa-bell text-gray-600 mr-2"></i>
+                            Notifications
+                        </button>
+                        <button class="bg-medical-blue-600 text-white px-4 py-2 rounded-lg hover:bg-medical-blue-700 transition-colors">
+                            <i class="fas fa-calendar-plus mr-2"></i>
+                            Book Appointment
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Next Appointment</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="patient.nextAppointment">Dec 15</p>
+                        </div>
+                        <div class="w-12 h-12 bg-medical-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-calendar text-medical-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Prescriptions</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="patient.prescriptionCount">3 Active</p>
+                        </div>
+                        <div class="w-12 h-12 bg-healing-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-pills text-healing-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Lab Results</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="patient.labResults">2 New</p>
+                        </div>
+                        <div class="w-12 h-12 bg-healthcare-orange-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-flask text-healthcare-orange-500"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Health Score</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="patient.healthScore">85/100</p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-heart text-purple-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Recent Appointments -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">Recent Appointments</h3>
+                        <div class="space-y-4">
+                            <!-- @MAP: appointments.map(appointment => ( -->
+                            <div class="appointment-card rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-medical-blue-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-user-md text-medical-blue-600"></i>
+                                        </div>
+                                        <div class="ml-4">
+                                            <h4 class="font-medium text-gray-900" data-bind="appointment.doctorName">Dr. Sarah Wilson</h4>
+                                            <p class="text-sm text-gray-600" data-bind="appointment.specialty">Cardiology</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-medium text-gray-900" data-bind="appointment.date">Dec 10, 2024</p>
+                                        <p class="text-sm text-gray-600" data-bind="appointment.time">2:30 PM</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex items-center justify-between">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Completed
+                                    </span>
+                                    <button class="text-medical-blue-600 text-sm font-medium hover:text-medical-blue-700">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Metrics -->
+                <div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">Health Metrics</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Blood Pressure</span>
+                                <span class="text-sm font-medium text-gray-900" data-bind="patient.bloodPressure">120/80</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Heart Rate</span>
+                                <span class="text-sm font-medium text-gray-900" data-bind="patient.heartRate">72 bpm</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Weight</span>
+                                <span class="text-sm font-medium text-gray-900" data-bind="patient.weight">150 lbs</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">Temperature</span>
+                                <span class="text-sm font-medium text-gray-900" data-bind="patient.temperature">98.6°F</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button class="w-full bg-medical-blue-50 text-medical-blue-700 px-4 py-3 rounded-lg text-left hover:bg-medical-blue-100 transition-colors">
+                                <i class="fas fa-calendar-plus mr-3"></i>
+                                Book New Appointment
+                            </button>
+                            <button class="w-full bg-healing-green-50 text-healing-green-700 px-4 py-3 rounded-lg text-left hover:bg-healing-green-100 transition-colors">
+                                <i class="fas fa-file-medical mr-3"></i>
+                                View Medical Records
+                            </button>
+                            <button class="w-full bg-healthcare-orange-50 text-healthcare-orange-600 px-4 py-3 rounded-lg text-left hover:bg-healthcare-orange-100 transition-colors">
+                                <i class="fas fa-pills mr-3"></i>
+                                Manage Prescriptions
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Patient Dashboard -->
+
+    <!-- @COMPONENT: Doctor Dashboard -->
+    <section id="doctorDashboard" class="py-20 bg-gray-50 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Doctor Dashboard</h1>
+                        <p class="text-gray-600 mt-2" data-bind="doctor.greeting">Welcome back, Dr. Sarah Wilson</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="bg-white px-4 py-2 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
+                            <i class="fas fa-clock text-gray-600 mr-2"></i>
+                            Schedule
+                        </button>
+                        <button class="bg-healing-green-600 text-white px-4 py-2 rounded-lg hover:bg-healing-green-700 transition-colors">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Add Patient
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doctor Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Today's Patients</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="doctor.todayPatients">12</p>
+                        </div>
+                        <div class="w-12 h-12 bg-medical-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-users text-medical-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Appointments</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="doctor.appointments">8 Remaining</p>
+                        </div>
+                        <div class="w-12 h-12 bg-healing-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-calendar text-healing-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Pending Reviews</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="doctor.pendingReviews">5</p>
+                        </div>
+                        <div class="w-12 h-12 bg-healthcare-orange-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-clipboard-check text-healthcare-orange-500"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Patient Satisfaction</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="doctor.satisfaction">4.8/5.0</p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-star text-purple-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Today's Schedule -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900">Today's Schedule</h3>
+                            <button class="text-healing-green-600 text-sm font-medium hover:text-healing-green-700">
+                                View Full Calendar
+                            </button>
+                        </div>
+                        <div class="space-y-4">
+                            <!-- @MAP: todayAppointments.map(appointment => ( -->
+                            <div class="appointment-card rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-user text-purple-600"></i>
+                                        </div>
+                                        <div class="ml-4">
+                                            <h4 class="font-medium text-gray-900" data-bind="appointment.patientName">John Smith</h4>
+                                            <p class="text-sm text-gray-600" data-bind="appointment.reason">Routine Checkup</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-medium text-gray-900" data-bind="appointment.time">10:30 AM</p>
+                                        <p class="text-sm text-gray-600" data-bind="appointment.duration">30 min</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex items-center justify-between">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        Scheduled
+                                    </span>
+                                    <div class="flex space-x-2">
+                                        <button class="text-healing-green-600 text-sm font-medium hover:text-healing-green-700">
+                                            Start Visit
+                                        </button>
+                                        <button class="text-medical-blue-600 text-sm font-medium hover:text-medical-blue-700">
+                                            View Chart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Management -->
+                <div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">Recent Patients</h3>
+                        <div class="space-y-4">
+                            <!-- @MAP: recentPatients.map(patient => ( -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-gray-600 text-sm"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium text-gray-900" data-bind="patient.name">Maria Garcia</p>
+                                        <p class="text-xs text-gray-600" data-bind="patient.lastVisit">Last visit: Dec 8</p>
+                                    </div>
+                                </div>
+                                <button class="text-medical-blue-600 text-xs font-medium hover:text-medical-blue-700">
+                                    View
+                                </button>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button class="w-full bg-medical-blue-50 text-medical-blue-700 px-4 py-3 rounded-lg text-left hover:bg-medical-blue-100 transition-colors">
+                                <i class="fas fa-file-medical-alt mr-3"></i>
+                                Create Medical Record
+                            </button>
+                            <button class="w-full bg-healing-green-50 text-healing-green-700 px-4 py-3 rounded-lg text-left hover:bg-healing-green-100 transition-colors">
+                                <i class="fas fa-prescription-bottle mr-3"></i>
+                                Write Prescription
+                            </button>
+                            <button class="w-full bg-healthcare-orange-50 text-healthcare-orange-600 px-4 py-3 rounded-lg text-left hover:bg-healthcare-orange-100 transition-colors">
+                                <i class="fas fa-chart-line mr-3"></i>
+                                View Analytics
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Doctor Dashboard -->
+
+    <!-- @COMPONENT: Admin Dashboard -->
+    <section id="adminDashboard" class="py-20 bg-gray-50 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+                        <p class="text-gray-600 mt-2">System Overview and Management</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="bg-white px-4 py-2 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
+                            <i class="fas fa-download text-gray-600 mr-2"></i>
+                            Export Data
+                        </button>
+                        <button class="bg-healthcare-orange-500 text-white px-4 py-2 rounded-lg hover:bg-healthcare-orange-600 transition-colors">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Add User
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Users</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="admin.totalUsers">1,247</p>
+                        </div>
+                        <div class="w-12 h-12 bg-medical-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-users text-medical-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Active Doctors</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="admin.activeDoctors">45</p>
+                        </div>
+                        <div class="w-12 h-12 bg-healing-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-md text-healing-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Appointments Today</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="admin.appointmentsToday">156</p>
+                        </div>
+                        <div class="w-12 h-12 bg-healthcare-orange-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-calendar text-healthcare-orange-500"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">System Health</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="admin.systemHealth">99.8%</p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-server text-purple-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- System Analytics -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900">System Analytics</h3>
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                <option>Last 7 days</option>
+                                <option>Last 30 days</option>
+                                <option>Last 90 days</option>
+                            </select>
+                        </div>
+                        
+                        <!-- @FUNCTIONALITY: This should implement a chart.js or similar charting library -->
+                        <div class="h-64 bg-gradient-to-br from-medical-blue-50 to-healing-green-50 rounded-lg flex items-center justify-center">
+                            <div class="text-center">
+                                <i class="fas fa-chart-line text-4xl text-medical-blue-600 mb-4"></i>
+                                <p class="text-gray-600">Analytics Chart</p>
+                                <p class="text-sm text-gray-500">Chart.js implementation needed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">Recent Activity</h3>
+                        <div class="space-y-4">
+                            <!-- @MAP: recentActivity.map(activity => ( -->
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 bg-medical-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-user-plus text-medical-blue-600 text-sm"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm text-gray-900" data-bind="activity.description">New user registered</p>
+                                    <p class="text-xs text-gray-500" data-bind="activity.time">2 minutes ago</p>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+
+                    <!-- Quick Management -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6">Quick Management</h3>
+                        <div class="space-y-3">
+                            <button class="w-full bg-medical-blue-50 text-medical-blue-700 px-4 py-3 rounded-lg text-left hover:bg-medical-blue-100 transition-colors">
+                                <i class="fas fa-users-cog mr-3"></i>
+                                User Management
+                            </button>
+                            <button class="w-full bg-healing-green-50 text-healing-green-700 px-4 py-3 rounded-lg text-left hover:bg-healing-green-100 transition-colors">
+                                <i class="fas fa-chart-bar mr-3"></i>
+                                System Reports
+                            </button>
+                            <button class="w-full bg-healthcare-orange-50 text-healthcare-orange-600 px-4 py-3 rounded-lg text-left hover:bg-healthcare-orange-100 transition-colors">
+                                <i class="fas fa-cog mr-3"></i>
+                                System Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Admin Dashboard -->
+
+    <!-- @COMPONENT: Appointment Booking Interface -->
+    <section id="appointmentBooking" class="py-20 bg-white hidden">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Book an Appointment</h2>
+                <p class="text-xl text-gray-600">Schedule your visit with our healthcare professionals</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
+                <form class="space-y-8" data-mock="true">
+                    <!-- Step 1: Doctor Selection -->
+                    <div data-step="1">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6">Select a Doctor</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- @MAP: doctors.map(doctor => ( -->
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="doctor" class="sr-only peer" data-bind="doctor.id">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 peer-checked:border-medical-blue-600 peer-checked:bg-medical-blue-50 hover:border-gray-300 transition-colors">
+                                    <div class="flex items-center">
+                                        <div class="w-12 h-12 bg-medical-blue-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-user-md text-medical-blue-600"></i>
+                                        </div>
+                                        <div class="ml-4">
+                                            <h4 class="font-semibold text-gray-900" data-bind="doctor.name">Dr. Sarah Wilson</h4>
+                                            <p class="text-sm text-gray-600" data-bind="doctor.specialty">Cardiology</p>
+                                            <div class="flex items-center mt-1">
+                                                <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                                <span class="text-xs text-gray-600 ml-1" data-bind="doctor.rating">4.9 (127 reviews)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Date and Time Selection -->
+                    <div data-step="2">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6">Select Date & Time</h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <!-- Calendar -->
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-4">Choose Date</h4>
+                                <!-- @FUNCTIONALITY: This should implement a calendar component -->
+                                <div class="bg-gray-50 rounded-lg p-6 text-center">
+                                    <i class="fas fa-calendar-alt text-3xl text-medical-blue-600 mb-3"></i>
+                                    <p class="text-gray-600">Calendar Component</p>
+                                    <p class="text-sm text-gray-500">React Calendar integration needed</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Time Slots -->
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-4">Available Times</h4>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <!-- @MAP: availableSlots.map(slot => ( -->
+                                    <label class="relative cursor-pointer">
+                                        <input type="radio" name="timeSlot" class="sr-only peer" data-bind="slot.time">
+                                        <div class="border border-gray-200 rounded-lg p-3 text-center peer-checked:border-medical-blue-600 peer-checked:bg-medical-blue-50 hover:border-gray-300 transition-colors">
+                                            <span class="text-sm font-medium text-gray-900" data-bind="slot.display">9:00 AM</span>
+                                        </div>
+                                    </label>
+                                    <!-- @END_MAP )) -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Appointment Details -->
+                    <div data-step="3">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6">Appointment Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Visit</label>
+                                <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent">
+                                    <option>Select reason</option>
+                                    <option>Routine Checkup</option>
+                                    <option>Follow-up</option>
+                                    <option>New Patient</option>
+                                    <option>Urgent Care</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Insurance Provider</label>
+                                <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent">
+                                    <option>Select insurance</option>
+                                    <option>Blue Cross Blue Shield</option>
+                                    <option>Aetna</option>
+                                    <option>Cigna</option>
+                                    <option>Self-Pay</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
+                            <textarea rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent" placeholder="Any specific concerns or notes for the doctor..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+                        <button type="button" class="text-gray-600 hover:text-gray-800 font-medium">
+                            Back
+                        </button>
+                        <div class="flex space-x-4">
+                            <button type="button" class="px-6 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                                Save as Draft
+                            </button>
+                            <button type="submit" class="px-6 py-3 bg-medical-blue-600 text-white rounded-lg font-medium hover:bg-medical-blue-700 transition-colors" data-event="click:submitAppointment">
+                                Book Appointment
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Appointment Booking Interface -->
+
+    <!-- @COMPONENT: Medical Records Interface -->
+    <section id="medicalRecords" class="py-20 bg-gray-50 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Medical Records</h1>
+                        <p class="text-gray-600 mt-2">Comprehensive patient health information</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="bg-white px-4 py-2 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
+                            <i class="fas fa-search text-gray-600 mr-2"></i>
+                            Search Records
+                        </button>
+                        <button class="bg-healing-green-600 text-white px-4 py-2 rounded-lg hover:bg-healing-green-700 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>
+                            New Record
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Patient Info Sidebar -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="text-center mb-6">
+                            <div class="w-20 h-20 bg-medical-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-user text-medical-blue-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900" data-bind="patient.name">John Doe</h3>
+                            <p class="text-sm text-gray-600" data-bind="patient.id">Patient ID: #12345</p>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-sm font-medium text-gray-500">Date of Birth</label>
+                                <p class="text-sm text-gray-900" data-bind="patient.dob">January 15, 1985</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-500">Blood Type</label>
+                                <p class="text-sm text-gray-900" data-bind="patient.bloodType">O+</p>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-500">Emergency Contact</label>
+                                <p class="text-sm text-gray-900" data-bind="patient.emergencyContact">Jane Doe</p>
+                                <p class="text-xs text-gray-600" data-bind="patient.emergencyPhone">(555) 123-4567</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medical Records Content -->
+                <div class="lg:col-span-3">
+                    <div class="space-y-6">
+                        <!-- Recent Visits -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-6">Recent Visits</h3>
+                            <div class="space-y-4">
+                                <!-- @MAP: recentVisits.map(visit => ( -->
+                                <div class="medical-record-card rounded-lg p-4">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <div class="flex items-center mb-2">
+                                                <h4 class="font-medium text-gray-900" data-bind="visit.date">December 10, 2024</h4>
+                                                <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Completed
+                                                </span>
+                                            </div>
+                                            <p class="text-sm text-gray-600 mb-2" data-bind="visit.doctor">Dr. Sarah Wilson - Cardiology</p>
+                                            <p class="text-sm text-gray-900" data-bind="visit.diagnosis">Routine cardiac checkup - Normal results</p>
+                                        </div>
+                                        <button class="text-medical-blue-600 text-sm font-medium hover:text-medical-blue-700">
+                                            View Details
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- @END_MAP )) -->
+                            </div>
+                        </div>
+
+                        <!-- Current Medications -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-6">Current Medications</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- @MAP: medications.map(medication => ( -->
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <h4 class="font-medium text-gray-900" data-bind="medication.name">Lisinopril</h4>
+                                            <p class="text-sm text-gray-600" data-bind="medication.dosage">10mg daily</p>
+                                            <p class="text-xs text-gray-500" data-bind="medication.prescribedBy">Prescribed by Dr. Wilson</p>
+                                        </div>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            Active
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- @END_MAP )) -->
+                            </div>
+                        </div>
+
+                        <!-- Lab Results -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-6">Recent Lab Results</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Test</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Result</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Range</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <!-- @MAP: labResults.map(result => ( -->
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" data-bind="result.test">Cholesterol</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-bind="result.value">180 mg/dL</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-bind="result.range">< 200 mg/dL</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-bind="result.date">Dec 8, 2024</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Normal
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <!-- @END_MAP )) -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- File Upload Section -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-6">Document Upload</h3>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-medical-blue-400 transition-colors">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                                <h4 class="text-lg font-medium text-gray-900 mb-2">Upload Medical Documents</h4>
+                                <p class="text-gray-600 mb-4">Drag and drop files or click to browse</p>
+                                <button class="bg-medical-blue-600 text-white px-6 py-2 rounded-lg hover:bg-medical-blue-700 transition-colors" data-implementation="Use FileUpload component here">
+                                    Choose Files
+                                </button>
+                                <p class="text-xs text-gray-500 mt-2">Supported formats: PDF, JPG, PNG (Max 10MB)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Medical Records Interface -->
+
+    <!-- @COMPONENT: Contact and Feedback -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Contact & Support</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Get in touch with our healthcare team or provide feedback about your experience
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div class="bg-gray-50 rounded-2xl p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h3>
+                    <form class="space-y-6" data-mock="true">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent" placeholder="Your first name" data-validation="required">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent" placeholder="Your last name" data-validation="required">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                            <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent" placeholder="your.email@example.com" data-validation="email">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                            <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent">
+                                <option>Select a subject</option>
+                                <option>General Inquiry</option>
+                                <option>Technical Support</option>
+                                <option>Appointment Issue</option>
+                                <option>Billing Question</option>
+                                <option>Feature Request</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                            <textarea rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent" placeholder="Tell us how we can help you..." data-validation="required"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-medical-blue-600 text-white py-3 rounded-lg font-medium hover:bg-medical-blue-700 transition-colors" data-event="click:submitContactForm">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-medical-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-map-marker-alt text-medical-blue-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold text-gray-900">Visit Us</h4>
+                                    <p class="text-gray-600">123 Healthcare Drive<br>Medical District, MD 12345</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-healing-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-phone text-healing-green-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold text-gray-900">Call Us</h4>
+                                    <p class="text-gray-600">Emergency: (555) 911-1234<br>General: (555) 123-4567</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-healthcare-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-envelope text-healthcare-orange-500"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold text-gray-900">Email Us</h4>
+                                    <p class="text-gray-600">info@healthsenseplus.com<br>support@healthsenseplus.com</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-clock text-purple-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-semibold text-gray-900">Office Hours</h4>
+                                    <p class="text-gray-600">Monday - Friday: 8:00 AM - 6:00 PM<br>Saturday: 9:00 AM - 4:00 PM<br>Sunday: Emergency Only</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feedback Section -->
+                    <div class="bg-gradient-to-br from-medical-blue-50 to-healing-green-50 rounded-2xl p-6">
+                        <h4 class="text-xl font-bold text-gray-900 mb-4">We Value Your Feedback</h4>
+                        <p class="text-gray-600 mb-4">Help us improve our healthcare services by sharing your experience.</p>
+                        <div class="flex items-center space-x-2 mb-4">
+                            <span class="text-sm text-gray-600">Rate your experience:</span>
+                            <div class="flex space-x-1">
+                                <!-- @COMPONENT: Star Rating -->
+                                <button class="text-yellow-400 hover:text-yellow-500" data-event="click:rateStar(1)">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                                <button class="text-yellow-400 hover:text-yellow-500" data-event="click:rateStar(2)">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                                <button class="text-yellow-400 hover:text-yellow-500" data-event="click:rateStar(3)">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                                <button class="text-yellow-400 hover:text-yellow-500" data-event="click:rateStar(4)">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                                <button class="text-gray-300 hover:text-yellow-500" data-event="click:rateStar(5)">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                                <!-- @END_COMPONENT: Star Rating -->
+                            </div>
+                        </div>
+                        <button class="bg-medical-blue-600 text-white px-6 py-2 rounded-lg hover:bg-medical-blue-700 transition-colors" data-event="click:openFeedbackModal">
+                            Leave Detailed Feedback
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Contact and Feedback -->
+
+    <!-- @COMPONENT: Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-6">
+                        <i class="fas fa-heartbeat text-medical-blue-400 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold">HealthSensePlus</span>
+                    </div>
+                    <p class="text-gray-300 mb-6">Comprehensive healthcare management system designed to streamline patient care and improve medical outcomes.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-medical-blue-400 transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-medical-blue-400 transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-medical-blue-400 transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-medical-blue-400 transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="text-gray-300 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="#services" class="text-gray-300 hover:text-white transition-colors">Services</a></li>
+                        <li><a href="#about" class="text-gray-300 hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#contact" class="text-gray-300 hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Services</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Patient Management</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Appointment Booking</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Medical Records</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Telemedicine</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Health Analytics</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Support</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Documentation</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">API Reference</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">System Status</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">&copy; 2024 HealthSensePlus. All rights reserved.</p>
+                    <div class="flex items-center space-x-6 mt-4 md:mt-0">
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">HIPAA Compliance</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        
+        (function() {
+            // Dashboard switching functionality
+            function showDashboard(role) {
+                // Hide all sections
+                const sections = ['patientDashboard', 'doctorDashboard', 'adminDashboard', 'appointmentBooking', 'medicalRecords'];
+                sections.forEach(section => {
+                    document.getElementById(section).classList.add('hidden');
+                });
+                
+                // Show selected dashboard
+                if (role && document.getElementById(role + 'Dashboard')) {
+                    document.getElementById(role + 'Dashboard').classList.remove('hidden');
+                    document.getElementById('home').style.display = 'none';
+                    document.getElementById('services').style.display = 'none';
+                    document.getElementById('contact').style.display = 'none';
+                }
+            }
+
+            // Authentication modal functions
+            window.openAuthModal = function() {
+                document.getElementById('authModal').classList.remove('hidden');
+            };
+
+            window.closeAuthModal = function() {
+                document.getElementById('authModal').classList.add('hidden');
+            };
+
+            // Role selection handlers
+            document.querySelectorAll('[data-event*="selectRole"]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const role = this.getAttribute('data-event').split(':')[1].replace('select', '').replace('Role', '').toLowerCase();
+                    openAuthModal();
+                    // Store selected role for after login
+                    sessionStorage.setItem('selectedRole', role);
+                });
+            });
+
+            // Login handler
+            document.querySelectorAll('[data-event*="handleLogin"]').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const selectedRole = sessionStorage.getItem('selectedRole') || 'patient';
+                    closeAuthModal();
+                    showDashboard(selectedRole);
+                });
+            });
+
+            // Form submission handlers
+            document.querySelectorAll('form[data-mock="true"]').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // TODO: Implement form validation and submission
+                    console.log('Form submitted:', this);
+                });
+            });
+
+            // Search functionality placeholder
+            function handleSearch(query) {
+                // TODO: Implement search functionality
+                console.log('Searching for:', query);
+            }
+
+            // File upload handler
+            document.querySelectorAll('[data-implementation*="FileUpload"]').forEach(button => {
+                button.addEventListener('click', function() {
+                    // TODO: Implement file upload functionality
+                    console.log('File upload triggered');
+                });
+            });
+
+            // Star rating handler
+            document.querySelectorAll('[data-event*="rateStar"]').forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = this.getAttribute('data-event').match(/\d+/)[0];
+                    // TODO: Implement star rating functionality
+                    console.log('Rating selected:', rating);
+                });
+            });
+
+            // Navigation smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+        })();
+    </script>
+</body>
+</html>
