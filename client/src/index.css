@@ -1,0 +1,241 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(213, 83%, 50%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+
+  /* Healthcare Theme Colors */
+  --medical-blue: hsl(213, 83%, 50%);
+  --medical-blue-50: hsl(214, 100%, 97%);
+  --medical-blue-100: hsl(214, 95%, 93%);
+  --medical-blue-500: hsl(213, 83%, 50%);
+  --medical-blue-600: hsl(213, 83%, 45%);
+  --medical-blue-700: hsl(213, 75%, 40%);
+  
+  --healing-green: hsl(158, 94%, 40%);
+  --healing-green-50: hsl(151, 81%, 96%);
+  --healing-green-100: hsl(149, 80%, 90%);
+  --healing-green-500: hsl(158, 94%, 40%);
+  --healing-green-600: hsl(158, 94%, 35%);
+  --healing-green-700: hsl(158, 94%, 30%);
+  
+  --healthcare-orange: hsl(43, 96%, 56%);
+  --healthcare-orange-50: hsl(48, 100%, 93%);
+  --healthcare-orange-100: hsl(48, 96%, 89%);
+  --healthcare-orange-400: hsl(43, 96%, 66%);
+  --healthcare-orange-500: hsl(43, 96%, 56%);
+  --healthcare-orange-600: hsl(36, 95%, 50%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(213, 83%, 50%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Custom 3D Button Animation */
+.container-button {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: "bt-1 bt-2 bt-3" "bt-4 bt-5 bt-6";
+  position: relative;
+  perspective: 800px;
+  padding: 0;
+  width: 140px;
+  height: 50px;
+  transition: all 0.3s ease-in-out;
+}
+
+.container-button:active {
+  transform: scale(0.95);
+}
+
+.hover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 200;
+}
+
+.bt-1 { grid-area: bt-1; }
+.bt-2 { grid-area: bt-2; }
+.bt-3 { grid-area: bt-3; }
+.bt-4 { grid-area: bt-4; }
+.bt-5 { grid-area: bt-5; }
+.bt-6 { grid-area: bt-6; }
+
+.bt-1:hover ~ .animated-button {
+  transform: rotateX(15deg) rotateY(-15deg) rotateZ(0deg);
+  box-shadow: -2px -2px hsl(20, 14.3%, 4.1%, 0.5);
+}
+
+.bt-1:hover ~ .animated-button::after {
+  animation: shake 0.5s ease-in-out 0.3s;
+  text-shadow: -2px -2px hsl(20, 14.3%, 4.1%, 0.5);
+}
+
+.bt-3:hover ~ .animated-button {
+  transform: rotateX(15deg) rotateY(15deg) rotateZ(0deg);
+  box-shadow: 2px -2px hsl(20, 14.3%, 4.1%, 0.5);
+}
+
+.bt-3:hover ~ .animated-button::after {
+  animation: shake 0.5s ease-in-out 0.3s;
+  text-shadow: 2px -2px hsl(20, 14.3%, 4.1%, 0.5);
+}
+
+.bt-4:hover ~ .animated-button {
+  transform: rotateX(-15deg) rotateY(-15deg) rotateZ(0deg);
+  box-shadow: -2px 2px hsl(20, 14.3%, 4.1%, 0.5);
+}
+
+.bt-4:hover ~ .animated-button::after {
+  animation: shake 0.5s ease-in-out 0.3s;
+  text-shadow: -2px 2px hsl(20, 14.3%, 4.1%, 0.5);
+}
+
+.bt-6:hover ~ .animated-button {
+  transform: rotateX(-15deg) rotateY(15deg) rotateZ(0deg);
+  box-shadow: 2px 2px hsl(20, 14.3%, 4.1%, 0.5);
+}
+
+.bt-6:hover ~ .animated-button::after {
+  animation: shake 0.5s ease-in-out 0.3s;
+  text-shadow: 2px 2px hsl(20, 14.3%, 4.1%, 0.5);
+}
+
+.hover:hover ~ .animated-button::before {
+  background: transparent;
+}
+
+.hover:hover ~ .animated-button::after {
+  content: "Login";
+  top: -150%;
+  transform: translate(-50%, 0);
+  font-size: 24px;
+  color: hsl(213, 83%, 50%);
+}
+
+.animated-button {
+  position: absolute;
+  padding: 0;
+  width: 140px;
+  height: 50px;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 600;
+  border: 3px solid hsl(213, 83%, 50%);
+  border-radius: 12px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.animated-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 50px;
+  background-color: hsl(213, 83%, 50%);
+  border-radius: 12px;
+  transition: all 0.3s ease-in-out;
+  z-index: -1;
+}
+
+.animated-button::after {
+  content: "Get Started";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 50px;
+  background-color: transparent;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 50px;
+  color: hsl(0, 0%, 100%);
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease-in-out;
+  z-index: 2;
+}
+
+@keyframes shake {
+  0% { left: 45%; }
+  25% { left: 54%; }
+  50% { left: 48%; }
+  75% { left: 52%; }
+  100% { left: 50%; }
+}
+
+/* Healthcare specific cards */
+.dashboard-card {
+  background: linear-gradient(135deg, hsl(60, 4.8%, 95.9%) 0%, hsl(240, 3.7%, 15.9%) 100%);
+  border-left: 4px solid hsl(213, 83%, 50%);
+}
+
+.stat-card {
+  background: linear-gradient(135deg, hsl(0, 0%, 100%) 0%, hsl(60, 4.8%, 95.9%) 100%);
+  box-shadow: 0 4px 6px -1px hsla(0, 0%, 0%, 0.1);
+}
+
+.appointment-card {
+  background: linear-gradient(135deg, hsl(214, 100%, 97%) 0%, hsl(214, 95%, 93%) 100%);
+  border-left: 4px solid hsl(158, 94%, 40%);
+}
+
+.medical-record-card {
+  background: linear-gradient(135deg, hsl(48, 100%, 93%) 0%, hsl(48, 96%, 89%) 100%);
+  border-left: 4px solid hsl(43, 96%, 56%);
+}
